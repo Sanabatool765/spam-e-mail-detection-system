@@ -2,19 +2,14 @@ import streamlit as st
 import pickle
 import string
 import pandas as pd
-import nltk
 from nltk.corpus import stopwords
 from nltk.stem.porter import PorterStemmer
-
-# ✅ ye add karo (important)
-nltk.download('punkt', quiet=True)
-nltk.download('stopwords', quiet=True)
 
 ps = PorterStemmer()
 
 def transform_text(text):
     text = text.lower()
-    text = nltk.word_tokenize(text)
+    text = text.split()
 
     y = []
     for i in text:
@@ -24,7 +19,7 @@ def transform_text(text):
     text = y[:]
     y.clear()
 
-    sw = set(stopwords.words("english"))   # ✅ yahan optimize kiya
+    sw = set(stopwords.words("english"))
 
     for i in text:
         if i not in sw and i not in string.punctuation:
@@ -38,10 +33,11 @@ def transform_text(text):
 
     return " ".join(y)
 
-
+# load model
 tfidf = pickle.load(open('vectorizer.pkl', 'rb'))
 model = pickle.load(open('model.pkl', 'rb'))
 
+# UI
 st.title("Email/SMS Spam Classifier")
 
 input_sms = st.text_area("Enter the message")
